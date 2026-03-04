@@ -10,6 +10,18 @@ Refer to [../README.md](../README.md) for the full questions.
 
 ```ts
 // Write your hook + usage example here
+function useDebounce<Type>(callback: Type, delay: Type):Type {
+  const callbackRef = React.useRef(callback)
+  React.useLayoutEffect(() => {
+    callbackRef.current = callback
+  })
+  return React.useMemo(
+    () => debounce((...args) => callbackRef.current(...args), delay),
+    [delay],
+  )
+}
+
+useDebounce(500)
 ```
 
 ---
@@ -18,4 +30,9 @@ Refer to [../README.md](../README.md) for the full questions.
 
 ```tsx
 // Write types + component implementation here
+const[search, setSearch] = useState('')
+const debouncedSearch = useDebounce(search, 200)
+ <div className="App">
+    <input value={debouncedSearch} onChange={setSearch} />
+</div>
 ```

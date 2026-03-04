@@ -13,6 +13,43 @@ Refer to [../README.md](../README.md) for the full questions.
 
 ```ts
 // Write your hook + usage example here
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      // Only update if the value actually changed to avoid unnecessary renders
+      setDebouncedValue((prev) => (prev === value ? prev : value));
+    }, delay);
+
+    // Cleanup: clears the timeout if value or delay changes, or on unmount
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+const SearchComponent = () => {
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce<string>(search, 500);
+
+  useEffect(() => {
+    if (debouncedSearch) {
+      // Trigger API call
+      console.log(`Fetching results for: ${debouncedSearch}`);
+    }
+  }, [debouncedSearch]);
+
+  return (
+    <input 
+      type="text" 
+      value={search} 
+      onChange={(e) => setSearch(e.target.value)} 
+      placeholder="Search..." 
+    />
+  );
+};
 ```
 
 ---
@@ -21,4 +58,5 @@ Refer to [../README.md](../README.md) for the full questions.
 
 ```tsx
 // Write types + component implementation here
+
 ```
